@@ -1,46 +1,30 @@
-import React, { Component } from 'react';
+import React from 'react';
+import { withRouter } from 'react-router-dom';
 
 // import './people-page.css';
-import ErrorIndicator from '../error-indicator';
 import RowContainer from '../row-container';
 import ErrorBoundary from '../error-boundary';
 import { PersonList, PersonDetails } from '../sw-components';
 
 
-export default class PeoplePage extends Component {
+const PeoplePage = ({ history, match }) => {
 
-    state = {
-        selectedPersonId: null,
-        hasError: false
-    }
+    const { id } = match.params;
 
-    componentDidCatch(error, info) {
-        this.setState({ hasError: true })
-    }
+    const itemList = (
+        <PersonList
+            onItemSelected={(itemId) => history.push(itemId)} />
+    );
 
-    onPersonSelected = (selectedPersonId) => {
-        this.setState({ selectedPersonId })
-    }
+    const personDetails = (
+        <PersonDetails itemId={id} />
+    )
 
-    render() {
-
-        if (this.state.hasError) {
-            return <ErrorIndicator />
-        }
-
-        const itemList = (
-            <PersonList
-                onItemSelected={this.onPersonSelected}/>
-        );
-
-        const personDetails = (
-            <PersonDetails itemId={this.state.selectedPersonId} />
-        )
-
-        return (
-            <ErrorBoundary>
-                <RowContainer left={itemList} right={personDetails} />
-            </ErrorBoundary>
-        )
-    }
+    return (
+        <ErrorBoundary>
+            <RowContainer left={itemList} right={personDetails} />
+        </ErrorBoundary>
+    )
 };
+
+export default withRouter(PeoplePage);
